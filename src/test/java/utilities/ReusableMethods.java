@@ -8,9 +8,11 @@ import org.openqa.selenium.WebElement;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -58,18 +60,17 @@ public class ReusableMethods {
 
     }
 
-
-    public static void tumSayfaScreenshot (WebDriver driver) {
-
+    public static void tumSayfaSreenshot(WebDriver driver)  {
         // 1- bir TakesScreenShot objesi olusturun ve deger olarak driver'i atayin
 
         TakesScreenshot tss = (TakesScreenshot) driver;
 
         // 2- screenshot'i kaydedecegimiz bir dosya olusturalim
-        // screenshot ismini unique yapabilmek icin timestamp ekleyelim
-        LocalDateTime ldt = LocalDateTime.now();
+        //    screenshot ismini unique yapabilmek icin, timestamp ekleyelim
+        LocalDateTime ldt = LocalDateTime.now(); // 2024-01-24T19:01:05.777116
         DateTimeFormatter zamanFormati = DateTimeFormatter.ofPattern("YYMMddHHmmss");
-        String timeStamp = ldt.format(zamanFormati);
+        String timeStamp = ldt.format(zamanFormati); // 240124190341
+
 
         File tumSayfaScreenshot = new File("target/tumSayfaScreenshot/tumSayfa"+timeStamp+".jpeg");
 
@@ -84,10 +85,10 @@ public class ReusableMethods {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
-    public static void tumSayfaScreenshot (WebDriver driver, String resimAdi) {
-
+    public static void tumSayfaSreenshot(WebDriver driver,String resimAdi)  {
         // 1- bir TakesScreenShot objesi olusturun ve deger olarak driver'i atayin
 
         TakesScreenshot tss = (TakesScreenshot) driver;
@@ -107,6 +108,7 @@ public class ReusableMethods {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     public static void webelementScreenshot(WebElement webElement){
@@ -149,5 +151,17 @@ public class ReusableMethods {
 
     }
 
-
+    public static String getScreenshot(String name) throws IOException {
+        // naming the screenshot with the current date to avoid duplication
+        String date = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
+        // TakesScreenshot is an interface of selenium that takes the screenshot
+        TakesScreenshot ts = (TakesScreenshot) Driver.getDriver();
+        File source = ts.getScreenshotAs(OutputType.FILE);
+        // full path to the screenshot location
+        String target = System.getProperty("user.dir") + "/test-output/Screenshots/" + name + date + ".png";
+        File finalDestination = new File(target);
+        // save the screenshot to the path given
+        FileUtils.copyFile(source, finalDestination);
+        return target;
+    }
 }
